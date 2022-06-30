@@ -1,7 +1,9 @@
 from random import shuffle
 
 from classes.card import Card
-from classes.presets import TYPES
+from classes.deck import Deck
+from classes.hand import Hand
+from classes.globals import TYPES
 
 
 
@@ -23,23 +25,31 @@ from classes.presets import TYPES
 
 class Player:
     def __init__(self, name):
-        self.wins = 0
-        self.card = None
         self.name = name
+        self.hand = Hand()
 
 
 class Game:
-    def __init__(self):
+    def __init__(
+            self,
+            starting_cards: int = 3
+    ):
         name1 = input("p1 name ")
         name2 = input("p2 name ")
-        self.card = Card(
-            name = input("card name "),
-            attack = int(input("attack ")),
-            hp = int(input("hp ")),
-            types = [TYPES[input("type ")]],
-        )
         self.p1 = Player(name1)
         self.p2 = Player(name2)
+
+        self.deck = Deck()
+
+        for x in range(starting_cards):
+            self.p1.hand.add_card(self.deck.draw())
+        # print(self.p1.hand.print_cards())
+        # print(self.p2.hand.print_cards())
+
+        for x in range(starting_cards):
+            self.p2.hand.add_card(self.deck.draw())
+        # print(self.p1.hand.print_cards())
+        # print(self.p2.hand.print_cards())
 
     # def wins(self, winner):
     #     w = "{} wins this round"
@@ -55,19 +65,15 @@ class Game:
     #     print(d)
 
     def play_game(self):
-        card = self.card
         print("here's ya card info:")
-        while card.hp > 0:
-            print(f"card:\n{vars(card)}")
-            m = "1 to heal, 2 to hurt, q to quit: "
+        while 1 > 0:
+            print(f"{self.p1.name}'s hand:\n"
+                  f"{self.p1.hand.print_cards()}")
+            print(f"{self.p2.name}'s hand:\n"
+                  f"{self.p2.hand.print_cards()}")
+            m = "q to quit: "
             res = input(m)
-            if res == "1":
-                m = "how much heal: "
-                card.heal(int(input(m)))
-            elif res == "2":
-                m = "how much hurt: "
-                card.hurt(int(input(m)))
-            elif res == 'q':
+            if res == 'q':
                 break
             else:
                 print("that's not an option!")

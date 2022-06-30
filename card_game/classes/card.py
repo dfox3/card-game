@@ -1,7 +1,7 @@
 from typing import List
 
 from .exceptions import CardTypeException
-from .presets import TYPES
+from .globals import TYPES
 from .type import Type
 
 
@@ -37,7 +37,7 @@ class Card:
     ):
         for type in types:
             if type.name not in TYPES:
-                raise CardTypeException("Type name is not in valid TYPES - check presets.py")
+                raise CardTypeException("Type name is not in valid TYPES - check globals.py")
         return True
 
 
@@ -51,3 +51,10 @@ class Card:
         self.hp = self.max_hp if self.hp + heal_val > self.max_hp else self.hp + heal_val
 
 
+    def to_print(self):
+        return f"name: {self.name}\n" \
+               f"attack: {self.attack}\n" \
+               f"hp: {self.hp}\n" \
+               f"max hp: {self.max_hp}\n" \
+               f"types: {[ n.name for n in self.types ]}\n" \
+               f"skills: {self.skills}\n"

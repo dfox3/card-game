@@ -40,7 +40,37 @@ TYPES = {
         name="water",
         desc="It is water.",
         logic={}
-        )
+        ),
+    "arid": Type(
+        name="arid",
+        desc="Embraces desolate environments.",
+        logic={}
+        ),
+    "ice": Type(
+        name="ice",
+        desc="Cold.",
+        logic={}
+        ),
+    "dragon": Type(
+        name="dragon",
+        desc="That of legends.",
+        logic={}
+        ),
+    "elven": Type(
+        name="elven",
+        desc="Ancient humanoid race.",
+        logic={}
+        ),
+    "demon": Type(
+        name="demon",
+        desc="Hailing from an evil dimension.",
+        logic={}
+        ),
+    "tiny": Type(
+        name="tiny",
+        desc="Teehee! Look at the little bean.",
+        logic={}
+        ),
 }
 
 SKILLS = [
