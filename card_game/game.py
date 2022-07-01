@@ -1,5 +1,7 @@
 from random import shuffle
+from typing import List
 
+from classes.board import Board
 from classes.card import Card
 from classes.deck import Deck
 from classes.hand import Hand
@@ -27,17 +29,21 @@ class Player:
     def __init__(self, name):
         self.name = name
         self.hand = Hand()
+        self.board = Board(grid=[50,5])
+
+        self.board.procedural_generate_1()
 
 
 class Game:
     def __init__(
             self,
-            starting_cards: int = 3
+            starting_cards: int = 3,
     ):
         name1 = input("p1 name ")
         name2 = input("p2 name ")
         self.p1 = Player(name1)
         self.p2 = Player(name2)
+
 
         self.deck = Deck()
 
@@ -68,9 +74,11 @@ class Game:
         print("here's ya card info:")
         while 1 > 0:
             print(f"{self.p1.name}'s hand:\n"
-                  f"{self.p1.hand.print_cards()}")
+                  f"{self.p1.hand.print_card_names()}")
+            self.p1.board.print_board()
             print(f"{self.p2.name}'s hand:\n"
-                  f"{self.p2.hand.print_cards()}")
+                  f"{self.p2.hand.print_card_names()}")
+            self.p2.board.print_board()
             m = "q to quit: "
             res = input(m)
             if res == 'q':

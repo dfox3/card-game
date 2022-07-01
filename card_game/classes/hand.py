@@ -22,3 +22,9 @@ class Hand:
         for c, card in enumerate(self.cards):
             ret_str += f"{c+1}:\n{card.to_print()}\n"
         return ret_str
+
+    def print_card_names(self):
+        ret_str = ""
+        for c, card in enumerate(self.cards):
+            ret_str += f"{c+1}:\n{card.name}\n"
+        return ret_str
