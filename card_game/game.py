@@ -29,9 +29,9 @@ class Player:
     def __init__(self, name):
         self.name = name
         self.hand = Hand()
-        self.board = Board(grid=[50,5])
+        self.board = Board(grid=[100,100], max_x=4, max_y=5, active_x=2, active_y=3)
 
-        self.board.procedural_generate_1()
+        self.board.procedural_generate_v2()
 
 
 class Game:
@@ -72,17 +72,25 @@ class Game:
 
     def play_game(self):
         print("here's ya card info:")
+        startup = True
         while 1 > 0:
-            print(f"{self.p1.name}'s hand:\n"
-                  f"{self.p1.hand.print_card_names()}")
-            self.p1.board.print_board()
-            print(f"{self.p2.name}'s hand:\n"
-                  f"{self.p2.hand.print_card_names()}")
-            self.p2.board.print_board()
-            m = "q to quit: "
+            if startup:
+                print(f"{self.p1.name}'s hand:\n"
+                      f"{self.p1.hand.print_card_names()}")
+                self.p1.board.print_board(short=True)
+                startup = False
+            # print(f"{self.p2.name}'s hand:\n"
+            #       f"{self.p2.hand.print_card_names()}")
+            # self.p2.board.print_board(short=True)
+            m = "1 to select grid, q to quit: "
             res = input(m)
             if res == 'q':
                 break
+            if res == '1':
+                x = int(input(f"choose x-coord (0 - {len(self.p1.board.grid)}): "))
+                y = int(input(f"choose y-coord (0 - {len(self.p1.board.grid[0])}): "))
+                self.p1.board.select_grid(x, y)
+                self.p1.board.print_selected_board(short=True)
             else:
                 print("that's not an option!")
         #     p1c = self.deck.rm_card()
