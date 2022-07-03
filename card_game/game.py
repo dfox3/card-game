@@ -1,35 +1,31 @@
-from random import shuffle
-from typing import List
+import sys
+
+import pygame
 
 from classes.board import Board
-from classes.card import Card
 from classes.deck import Deck
 from classes.hand import Hand
-from classes.globals import TYPES
+from classes.tiles import TileMap, TileSelector
 
 
+################################# LOAD UP A BASIC WINDOW AND CLOCK #################################
+MAP = [40, 50]
 
-# class Deck:
-#     def __init__(self):
-#         self.cards = []
-#         for i in range(2, 15):
-#             for j in range(4):
-#                 self.cards\
-#                     .append(Card(i,
-#                                  j))
-#         shuffle(self.cards)
-#
-#     def rm_card(self):
-#         if len(self.cards) == 0:
-#             return
-#         return self.cards.pop()
+pygame.init()
+DISPLAY_W, DISPLAY_H = MAP[1]*16, MAP[0]*16
+canvas = pygame.Surface((DISPLAY_W,DISPLAY_H))
+window = pygame.display.set_mode(((DISPLAY_W,DISPLAY_H)))
+running = True
+clock = pygame.time.Clock()
+
+
 
 
 class Player:
     def __init__(self, name):
         self.name = name
         self.hand = Hand()
-        self.board = Board(grid=[100,100], max_x=4, max_y=5, active_x=2, active_y=3)
+        self.board = Board(grid=[MAP[0],MAP[1]], max_x=4, max_y=5, active_x=2, active_y=3)
 
         self.board.procedural_generate_v2()
 
@@ -39,12 +35,20 @@ class Game:
             self,
             starting_cards: int = 3,
     ):
-        name1 = input("p1 name ")
-        name2 = input("p2 name ")
+        name1 = "gus"
+        name2 = "betty"
         self.p1 = Player(name1)
         self.p2 = Player(name2)
 
+        #################################### LOAD THE LEVEL #######################################
 
+        self.map = TileMap(self.p1.board.get_tiles())
+        self.p1.board.select_grid()
+        print(self.p1.board.selected_spaces)
+        self.selector = TileSelector(self.p1.board.selected_spaces)
+        self.active_selector = TileSelector(self.p1.board.active_spaces)
+        print(len(self.p1.board.get_tiles()))
+        print(len(self.p1.board.get_tiles()[0]))
         self.deck = Deck()
 
         for x in range(starting_cards):
@@ -75,24 +79,57 @@ class Game:
         startup = True
         while 1 > 0:
             if startup:
-                print(f"{self.p1.name}'s hand:\n"
-                      f"{self.p1.hand.print_card_names()}")
-                self.p1.board.print_board(short=True)
+
+                canvas.fill((0, 0, 0))  # Fills the entire screen with light blue
+                self.map.draw_map(canvas)
+                self.selector.draw(canvas, pygame.Color(255,225,255,20), border=True)
+                self.active_selector.draw(canvas, pygame.Color(255,0,255,100))
+                window.blit(canvas, (0, 0))
+
+                pygame.display.update()
+            #     print(f"{self.p1.name}'s hand:\n"
+            #           f"{self.p1.hand.print_card_names()}")
+            #     self.p1.board.print_board(short=True)
                 startup = False
-            # print(f"{self.p2.name}'s hand:\n"
-            #       f"{self.p2.hand.print_card_names()}")
-            # self.p2.board.print_board(short=True)
-            m = "1 to select grid, q to quit: "
-            res = input(m)
-            if res == 'q':
-                break
-            if res == '1':
-                x = int(input(f"choose x-coord (0 - {len(self.p1.board.grid)}): "))
-                y = int(input(f"choose y-coord (0 - {len(self.p1.board.grid[0])}): "))
-                self.p1.board.select_grid(x, y)
-                self.p1.board.print_selected_board(short=True)
-            else:
-                print("that's not an option!")
+            for event in pygame.event.get():
+
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_q:
+                        sys.exit()
+
+                    if event.key == pygame.K_LEFT:
+                        self.p1.board.move_selection("left")
+                    if event.key == pygame.K_RIGHT:
+                        self.p1.board.move_selection("right")
+                    if event.key == pygame.K_UP:
+                        self.p1.board.move_selection("up")
+                    if event.key == pygame.K_DOWN:
+                        self.p1.board.move_selection("down")
+                canvas.fill((0, 0, 0))  # Fills the entire screen with light blue
+                self.map.draw_map(canvas)
+                self.selector = TileSelector(self.p1.board.selected_spaces)
+                self.active_selector = TileSelector(self.p1.board.active_spaces)
+                self.selector.draw(canvas, pygame.Color(255,225,255,20), border=True)
+                self.active_selector.draw(canvas, pygame.Color(255,0,255,100))
+                window.blit(canvas, (0, 0))
+                pygame.display.update()
+
+                    #window.blit(canvas, (0, 0))
+            # # print(f"{self.p2.name}'s hand:\n"
+            # #       f"{self.p2.hand.print_card_names()}")
+            # # self.p2.board.print_board(short=True)
+            # m = "1 to select grid, q to quit: "
+            # res = input(m)
+            # if res == 'q':
+            #     break
+            # if res == '1':
+            #     x = int(input(f"choose x-coord (0 - {len(self.p1.board.grid)}): "))
+            #     y = int(input(f"choose y-coord (0 - {len(self.p1.board.grid[0])}): "))
+            #     self.p1.board.select_grid(x, y)
+            #     self.p1.board.print_selected_board(short=True)
+            # else:
+            #     print("that's not an option!")
+
         #     p1c = self.deck.rm_card()
         #     p2c = self.deck.rm_card()
         #     p1n = self.p1.name
@@ -110,7 +147,7 @@ class Game:
         #
         # win = self.winner(self.p1,
         #                  self.p2)
-        print(f"{card.name} has passed away.")
+        # print(f"{card.name} has passed away.")
 
     # def winner(self, p1, p2):
     #     if p1.wins > p2.wins:

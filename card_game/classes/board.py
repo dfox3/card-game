@@ -21,6 +21,7 @@ class Board:
         self.pg_positions = { p["name"]: i for i, p in enumerate(self.probs) }
         self.seed_environment = random.choice(self.probs)
         self.selected_grid = None
+        self.selected_spaces = []
         self.active_spaces = []
         self.max_x = max_x
         self.max_y = max_y
@@ -33,24 +34,56 @@ class Board:
             x: int = 0,
             y: int = 0,
     ):
+        print(f"{x},{y}")
         # logic to handle edges
         if x > len(self.grid) - self.max_x:
             xs = [ len(self.grid) - self.max_x + i for i in range(self.max_x) ]
+            x = len(self.grid) - self.max_x
+        elif x < 0:
+            xs = [ i for i in range(self.max_x) ]
+            x = 0
         else:
             xs = [ x + i for i in range(self.max_x) ]
         if y > len(self.grid[0]) - self.max_y:
             ys = [ len(self.grid[0]) - self.max_y + i for i in range(self.max_y) ]
+            y = len(self.grid[0]) - self.max_y
+        elif y < 0:
+            ys = [ i for i in range(self.max_y) ]
+            y = 0
         else:
             ys = [ y + i for i in range(self.max_y) ]
         # build selected grid
         grid = [self.max_x, self.max_y]
         self.selected_grid = np.reshape(np.array([ [ self.grid[xs[row], ys[col]] for col in range(grid[1]) ] for row in range(grid[0]) ]), grid)
+        # build selected spaces
+        self.selected_spaces = []
+        for xx in xs:
+            for yy in ys:
+                self.selected_spaces.append([xx, yy])
         # build active part of selected grid
-        starting_active_x = (self.max_x - self.active_x) // 2
-        starting_active_y = (self.max_y - self.active_y) // 2
-        for active_x in range(starting_active_x, starting_active_x + self.active_x):
-            for active_y in range(starting_active_y, starting_active_y + self.active_y):
-                self.activate_space(active_x, active_y)
+        self.active_spaces = []
+        starting_active_x = x + (self.max_x - self.active_x) // 2
+        starting_active_y = y + (self.max_y - self.active_y) // 2
+        for active_x in range(self.active_x):
+            for active_y in range(self.active_y):
+                print(f"active: {active_x},{active_y}")
+                print(f"starting active: {starting_active_x},{starting_active_y}")
+                self.activate_space(starting_active_x + active_x, starting_active_y + active_y)
+
+    def move_selection(self, direction):
+        print(direction)
+        if direction == "left":
+            self.select_grid(self.selected_spaces[0][0], self.selected_spaces[0][1] - 1)
+        if direction == "right":
+            self.select_grid(self.selected_spaces[0][0], self.selected_spaces[0][1] + 1)
+        if direction == "up":
+            self.select_grid(self.selected_spaces[0][0] - 1, self.selected_spaces[0][1])
+        if direction == "down":
+            self.select_grid(self.selected_spaces[0][0] + 1, self.selected_spaces[0][1])
+
+
+    def get_tiles(self):
+        return [ [ space.environment for space in row ] for row in self.grid ]
 
 
     def activate_space(self, x, y):
