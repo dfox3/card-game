@@ -1,4 +1,4 @@
-ASSET_PATH = "card_game/classes/assets/"
+ASSET_PATH = "classes/assets/"
 
 BOARD_TILES = {
     "grass": [
@@ -40,3 +40,6 @@ BOARD_TILES = {
         "board/desert3.png",
     ],
 }
+
+DUMMY_TILE = "stills/dummy.png"
+TITLE_TILE = "stills/title.png"

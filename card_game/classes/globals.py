@@ -99,6 +99,8 @@ SHORT_ENV = {
     "pit": "x"
 }
 
+MAP = [40, 50]
+
 PG_1 = [
     # grass, water, trees, mountains, desert, hellscape, snow, hills, pit
     {
