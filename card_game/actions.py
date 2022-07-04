@@ -2,6 +2,7 @@ import sys
 
 import pygame
 
+from classes.button import Button
 from phases import Phases
 
 
@@ -100,11 +101,21 @@ def _shop_logic(**kwargs):
 def _title_logic(**kwargs):
     screen = kwargs["screen"]
     ret_enum = None
+
     for event in pygame.event.get():
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_q:
                 sys.exit()
+            if event.key == pygame.K_y:
+                print("yo y!")
+            # start game
             if event.key == pygame.K_RETURN:
                 ret_enum = Phases.MAP_CHOICE
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            print("yo")
+            if screen.title.start_button.check_for_input(screen.title.check_mouse()):
+                ret_enum = Phases.MAP_CHOICE
+            if screen.title.quit_button.check_for_input(screen.title.check_mouse()):
+                sys.exit()
         screen.draw()
     return ret_enum

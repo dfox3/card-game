@@ -11,13 +11,13 @@ from actions import (
     _title_logic,
 )
 from classes.deck import Deck
-from classes.globals import MAP
+from classes.globals import BIT, MAP
 from classes.player import Player
 from phases import *
 
 
 pygame.init()
-DISPLAY_W, DISPLAY_H = MAP[1]*16, MAP[0]*16
+DISPLAY_W, DISPLAY_H = MAP[1]*BIT, MAP[0]*BIT
 canvas = pygame.Surface((DISPLAY_W,DISPLAY_H))
 window = pygame.display.set_mode(((DISPLAY_W,DISPLAY_H)))
 running = True
@@ -45,7 +45,6 @@ class Game:
 
         for x in range(starting_cards):
             self.p2.hand.add_card(self.deck.draw())
-
 
     def load_phases(self):
         self.PHASES = {
@@ -89,7 +88,7 @@ class Game:
             # better go catch it
             new_phase = self.PHASES[self.phase]["action"](
                 player=self.p1,
-                screen=self.PHASES[self.phase]["screen"]
+                screen=self.PHASES[self.phase]["screen"],
             )
             if new_phase:
                 self.phase = new_phase

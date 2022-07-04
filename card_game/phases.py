@@ -4,6 +4,7 @@ sys.path.append('..')
 
 import pygame
 
+from classes.presets.colors import Colors
 from classes.tiles import DummyScreen, TileMap, TileSelector, TitleScreen
 
 class Phases(enum.Enum):
@@ -88,8 +89,8 @@ class MapChoice:
         self.map.draw(self.canvas)
         self.selector = TileSelector(self.player.board.selected_spaces)
         self.active_selector = TileSelector(self.player.board.active_spaces)
-        self.selector.draw(self.canvas, pygame.Color(255, 225, 255, 20), border=True)
-        self.active_selector.draw(self.canvas, pygame.Color(255, 0, 255, 110))
+        self.selector.draw(self.canvas, pygame.Color(Colors.WHITE + (20,)), border=True)
+        self.active_selector.draw(self.canvas, pygame.Color(Colors.PINK))
         self.window.blit(self.canvas, (0, 0))
 
 

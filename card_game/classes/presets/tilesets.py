@@ -31,8 +31,6 @@ BOARD_TILES = {
     ],
     "water": [
         "board/water1.png",
-        "board/water2.png",
-        "board/water3.png",
     ],
     "desert": [
         "board/desert1.png",

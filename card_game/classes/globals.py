@@ -1,3 +1,5 @@
+import enum
+
 from .type import Type
 
 TYPES = {
@@ -99,7 +101,13 @@ SHORT_ENV = {
     "pit": "x"
 }
 
-MAP = [40, 50]
+MAP = [24, 40]
+
+BIT = 32
+
+class Screen():
+    WIDTH = MAP[1] * BIT
+    HEIGHT = MAP[0] * BIT
 
 PG_1 = [
     # grass, water, trees, mountains, desert, hellscape, snow, hills, pit

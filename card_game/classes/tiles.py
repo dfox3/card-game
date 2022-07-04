@@ -2,6 +2,9 @@ import random
 
 import pygame
 
+from .button import Button
+from .globals import BIT, Screen
+from .presets.colors import Colors
 from .presets.tilesets import ASSET_PATH, BOARD_TILES, DUMMY_TILE, TITLE_TILE
 
 
@@ -16,7 +19,7 @@ class DummyScreen():
 class Tile(pygame.sprite.Sprite):
     def __init__(self, image, x, y):
         pygame.sprite.Sprite.__init__(self)
-        self.image = pygame.image.load(image)
+        self.image = pygame.transform.scale(pygame.image.load(image), (BIT, BIT))
         # Manual load in: self.image = pygame.image.load(image)
         self.rect = self.image.get_rect()
         self.rect.x, self.rect.y = x, y
@@ -26,7 +29,7 @@ class Tile(pygame.sprite.Sprite):
 
 class TileMap():
     def __init__(self, tiles, tileset=BOARD_TILES):
-        self.tile_size = 16
+        self.tile_size = BIT
         self.start_x, self.start_y = 0, 0
         self.tileset = tileset
         self.tiles = self.load_tiles(tiles)
@@ -55,7 +58,7 @@ class TileMap():
 
 
 class TileSelector():
-    def __init__(self, selected_grid, tile_size=16):
+    def __init__(self, selected_grid, tile_size=BIT):
         self.selected_grid = selected_grid
         self.tile_size = tile_size
 
@@ -66,7 +69,7 @@ class TileSelector():
         w_fill = ((self.selected_grid[-1][1] - self.selected_grid[0][1] + 1) * self.tile_size)
         h_fill = ((self.selected_grid[-1][0] - self.selected_grid[0][0] + 1) * self.tile_size)
         fill = pygame.Rect(x_fill, y_fill, w_fill, h_fill)
-        self.draw_rect_alpha(surface, (255,255,255,20), fill)
+        self.draw_rect_alpha(surface, Colors.WHITE + (20,), fill)
 
         for cell in self.selected_grid:
             x_out = cell[1] * self.tile_size
@@ -75,7 +78,7 @@ class TileSelector():
             y_in = cell[0] * self.tile_size + 1
             selected_tile_out = pygame.Rect(x_out, y_out, self.tile_size, self.tile_size)
             selected_tile_in = pygame.Rect(x_in, y_in, self.tile_size - 1 - 1, self.tile_size - 1 - 1)
-            self.draw_rect_alpha(surface, (255,255,255,100), selected_tile_out, width=1)
+            self.draw_rect_alpha(surface, Colors.WHITE + (100,), selected_tile_out, width=1)
             self.draw_rect_alpha(surface, color, selected_tile_in, width=1)
         # border for all cells
         if border:
@@ -84,13 +87,13 @@ class TileSelector():
             w_border = ((self.selected_grid[-1][1] - self.selected_grid[0][1] + 1) * self.tile_size) + 1 + 1
             h_border = ((self.selected_grid[-1][0] - self.selected_grid[0][0] + 1) * self.tile_size) + 1 + 1
             border = pygame.Rect(x_border, y_border, w_border, h_border)
-            self.draw_rect_alpha(surface, (255,255,255), border, width=1)
+            self.draw_rect_alpha(surface, Colors.WHITE, border, width=1)
             x_border = (self.selected_grid[0][1] * self.tile_size) - 1 - 2
             y_border = (self.selected_grid[0][0] * self.tile_size) - 1 - 2
             w_border = ((self.selected_grid[-1][1] - self.selected_grid[0][1] + 1) * self.tile_size) + 1 + 1 + 2 + 2
             h_border = ((self.selected_grid[-1][0] - self.selected_grid[0][0] + 1) * self.tile_size) + 1 + 1 + 2 + 2
             border = pygame.Rect(x_border, y_border, w_border, h_border)
-            self.draw_rect_alpha(surface, (0,0,0), border, width=2)
+            self.draw_rect_alpha(surface, Colors.BLACK, border, width=2)
 
     def draw_rect_alpha(self, surface, color, rect, width=None):
         shape_surf = pygame.Surface(pygame.Rect(rect).size, pygame.SRCALPHA)
@@ -102,9 +105,42 @@ class TileSelector():
 
 class TitleScreen():
     def __init__(self, image=f"{ASSET_PATH}/{TITLE_TILE}"):
-        self.image = pygame.image.load(image)
+        self.image = pygame.transform.scale(pygame.image.load(image), (Screen.WIDTH, Screen.HEIGHT))
         self.rect = self.image.get_rect()
+        self.mouse = pygame.mouse
+        self.start_button = Button(
+            image=None,
+            pos=(Screen.WIDTH // 2, Screen.HEIGHT // 2 + 100),
+            text_input="Start",
+            font=_get_font(30),
+            base_color=Colors.WHITE,
+            hovering_color=Colors.GREEN
+        )
+        self.quit_button = Button(
+            image=None,
+            pos=(Screen.WIDTH // 2, Screen.HEIGHT // 2 + 150),
+            text_input="Quit",
+            font=_get_font(20),
+            base_color=Colors.WHITE,
+            hovering_color=Colors.RED
+        )
 
     def draw(self, surface):
         surface.blit(self.image, (0, 0))
+        mouse_pos = self.check_mouse()
+        title_text = _get_font(45).render("Fantastic VISIONS", True, "White")
+        title_rect = title_text.get_rect(center=(Screen.WIDTH // 2, Screen.HEIGHT // 2 - 100))
+        surface.blit(title_text, title_rect)
+        self.start_button.change_color(mouse_pos)
+        self.start_button.update(surface)
+        self.quit_button.change_color(mouse_pos)
+        self.quit_button.update(surface)
 
+    def check_mouse(self):
+        print(self.mouse.get_pos())
+        return self.mouse.get_pos()
+
+
+
+def _get_font(size):
+    return pygame.font.Font("classes/assets/font.ttf", size)
