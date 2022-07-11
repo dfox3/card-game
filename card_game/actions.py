@@ -70,7 +70,9 @@ def _map_choice_logic(**kwargs):
 
 
             if event.key == pygame.K_RETURN:
-                ret_enum = Phases.CONFIRM_MAP_MENU
+                #ret_enum = Phases.CONFIRM_MAP_MENU
+
+                ret_enum = Phases.MACRO
 
         screen.draw()
     return ret_enum
@@ -106,13 +108,9 @@ def _title_logic(**kwargs):
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_q:
                 sys.exit()
-            if event.key == pygame.K_y:
-                print("yo y!")
-            # start game
             if event.key == pygame.K_RETURN:
                 ret_enum = Phases.MAP_CHOICE
         if event.type == pygame.MOUSEBUTTONDOWN:
-            print("yo")
             if screen.title.start_button.check_for_input(screen.title.check_mouse()):
                 ret_enum = Phases.MAP_CHOICE
             if screen.title.quit_button.check_for_input(screen.title.check_mouse()):

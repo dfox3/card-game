@@ -19,9 +19,7 @@ class Button():
 
     def check_for_input(self, position):
         if position[0] in range(self.rect.left, self.rect.right) and position[1] in range(self.rect.top, self.rect.bottom):
-            print(True)
             return True
-        print(False)
         return False
 
     def change_color(self, position):

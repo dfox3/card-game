@@ -1,6 +1,5 @@
-import enum
-
 from .type import Type
+from .utils import make_probs
 
 TYPES = {
     "nocturnal": Type(
@@ -98,46 +97,82 @@ SHORT_ENV = {
     "hellscape": "#",
     "snow": "*",
     "hills": "h",
-    "pit": "x"
+    "pit": "x",
+    "enchanted": "e",
+    "clouds": "e",
 }
 
-MAP = [24, 40]
+MAP = [28, 40]
 
-BIT = 32
+BITS = 32
+BIG_BITS = BITS * 4
 
 class Screen():
-    WIDTH = MAP[1] * BIT
-    HEIGHT = MAP[0] * BIT
+    WIDTH = MAP[1] * BITS
+    HEIGHT = MAP[0] * BITS
+
+ELEVATIONS = {
+    "grass": [0,1],
+    "water": [0],
+    "hills": [1],
+    "trees": [0,1],
+    "mountains": [1,2],
+    "hellscape": [0],
+    "snow": [0,1],
+    "pit": [0],
+    "enchanted": [0,1,2,3],
+    "clouds": [3],
+    "desert": [0],
+}
+
+NATURAL_RAMP = ["hills", "enchanted"]
 
 PG_1 = [
-    # grass, water, trees, mountains, desert, hellscape, snow, hills, pit
+    # grass, water, trees, mountains, desert, hellscape, snow, hills, pit, enchanted, clouds
     {
         "name": "grass",
-        "prob": [0.7894736842,0.05263157895,0.06578947368,0,0.01315789474,0,0.02631578947,0.05263157895,0,]},
-
+        "prob": make_probs([300, 20, 25, 0, 5, 0, 10, 20, 0, 1, 20]),
+    },
     {
         "name": "water",
-        "prob": [0.08403361345,0.8403361345,0.01120448179,0.01400560224,0.008403361345,0,0.01400560224,0.02801120448,0,]},
+        "prob": make_probs([30, 300, 4, 5, 3, 0, 5, 10, 0, 5, 10]),
+    },
     {
         "name": "trees",
-        "prob": [0.1346801347,0.03367003367,0.6734006734,0.01683501684,0.006734006734,0,0.03367003367,0.101010101,0,]},
+        "prob": make_probs([40, 10, 200, 5, 2, 0, 10, 30, 0, 1, 10]),
+    },
     {
         "name": "mountains",
-        "prob": [0,0.02564102564,0.05128205128,0.5128205128,0.1025641026,0.05128205128,0.1025641026,0.1538461538,0,]},
+        "prob": make_probs([0, 5, 10, 100, 20, 10, 20, 30, 0, 5, 20]),
+    },
     {
         "name": "desert",
-        "prob": [0.02590673575,0.0103626943,0.00518134715,0.207253886,0.518134715,0.0518134715,0.02590673575,0.1554404145,0,]},
+        "prob": make_probs([5, 2, 1, 40, 150, 10, 5, 30, 0, 3, 0]),
+    },
     {
         "name": "hellscape",
-        "prob": [0,0,0,0.35,0.25,0.3,0.01,0.08,0.01,]},
+        "prob": make_probs([0, 0, 0, 35, 25, 30, 1, 8, 1, 10, 0]),
+    },
     {
         "name": "snow",
-        "prob": [0.08,0.08,0.08,0.08,0.08,0.04,0.48,0.08,0,]},
+        "prob": make_probs([10, 10, 10, 10, 10, 5, 100, 10, 0, 1, 10]),
+    },
     {
         "name": "hills",
-        "prob": [0.06,0.06,0.08,0.16,0.06,0.004,0.056,0.52,0,]},
+        "prob": make_probs([15, 15, 20, 40, 15, 1, 14, 130, 0, 1, 10]),
+    },
     {
         "name": "pit",
-        "prob": [0,0,0,0.3,0.24,0.3,0.02,0.14,0,]},
+        "prob": make_probs([0, 0, 0, 15, 12, 15, 1, 7, 0, 50, 10]),
+    },
+    {
+        "name": "enchanted",
+        "prob": make_probs([3, 3, 10, 10, 5, 25, 5, 3, 0, 2, 25]),
+    },
+    {
+        "name": "clouds",
+        "prob": make_probs([20, 10, 15, 20, 0, 0, 10, 10, 1, 1, 30]),
+    },
+    # grass, water, trees, mountains, desert, hellscape, snow, hills, pit, enchanted, clouds
 
 ]

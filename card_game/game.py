@@ -1,3 +1,7 @@
+import glob
+import os
+
+from PIL import Image
 import pygame
 
 from actions import (
@@ -11,13 +15,15 @@ from actions import (
     _title_logic,
 )
 from classes.deck import Deck
-from classes.globals import BIT, MAP
+from classes.globals import BITS, MAP
 from classes.player import Player
 from phases import *
 
 
+
+
 pygame.init()
-DISPLAY_W, DISPLAY_H = MAP[1]*BIT, MAP[0]*BIT
+DISPLAY_W, DISPLAY_H = MAP[1]*BITS, MAP[0]*BITS
 canvas = pygame.Surface((DISPLAY_W,DISPLAY_H))
 window = pygame.display.set_mode(((DISPLAY_W,DISPLAY_H)))
 running = True

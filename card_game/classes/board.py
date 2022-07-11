@@ -3,7 +3,7 @@ import random
 from typing import List
 
 from .card import Card
-from .globals import PG_1, SHORT_ENV, MAX_DIMENSIONS, STARTING_ACTIVE_SPACES
+from .globals import ELEVATIONS, NATURAL_RAMP, PG_1, SHORT_ENV, MAX_DIMENSIONS, STARTING_ACTIVE_SPACES
 
 class Board:
 
@@ -27,6 +27,7 @@ class Board:
         self.max_y = max_y
         self.active_x = active_x
         self.active_y = active_y
+        self.select_grid()
 
 
     def select_grid(
@@ -34,7 +35,6 @@ class Board:
             x: int = 0,
             y: int = 0,
     ):
-        print(f"{x},{y}")
         # logic to handle edges
         if x > len(self.grid) - self.max_x:
             xs = [ len(self.grid) - self.max_x + i for i in range(self.max_x) ]
@@ -66,12 +66,9 @@ class Board:
         starting_active_y = y + (self.max_y - self.active_y) // 2
         for active_x in range(self.active_x):
             for active_y in range(self.active_y):
-                print(f"active: {active_x},{active_y}")
-                print(f"starting active: {starting_active_x},{starting_active_y}")
                 self.activate_space(starting_active_x + active_x, starting_active_y + active_y)
 
     def move_selection(self, direction):
-        print(direction)
         if direction == "left":
             self.select_grid(self.selected_spaces[0][0], self.selected_spaces[0][1] - 1)
         if direction == "right":
@@ -84,6 +81,10 @@ class Board:
 
     def get_tiles(self):
         return [ [ space.environment for space in row ] for row in self.grid ]
+
+
+    def get_selected_spaces(self):
+        return [ [ space for space in row ] for row in self.selected_grid ]
 
 
     def activate_space(self, x, y):
@@ -99,13 +100,13 @@ class Board:
         for x in range(len(self.grid)):
             for y in range(len(self.grid[0])):
                 if x == 0 and y == 0:
-                    self.grid[x, y].environment = self._generate_environment_from_seed()
+                    self.grid[x, y].set_environment(self._generate_environment_from_seed())
                 elif x == 0:
-                    self.grid[x, y].environment = self._generate_random_environment_one_parent(x, y-1)
+                    self.grid[x, y].set_environment(self._generate_random_environment_one_parent(x, y-1))
                 elif y == 0:
-                    self.grid[x, y].environment = self._generate_random_environment_one_parent(x-1, y)
+                    self.grid[x, y].set_environment(self._generate_random_environment_one_parent(x-1, y))
                 else:
-                    self.grid[x, y].environment = self._generate_random_environment_multi_parents([[x-1, y], [x, y-1]])
+                    self.grid[x, y].set_environment(self._generate_random_environment_multi_parents([[x-1, y], [x, y-1]]))
 
 
 
@@ -115,15 +116,15 @@ class Board:
         for x in range(len(self.grid)):
             for y in range(len(self.grid[0])):
                 if x == 0 and y == 0:
-                    self.grid[x, y].environment = self._generate_environment_from_seed()
+                    self.grid[x, y].set_environment(self._generate_environment_from_seed())
                 elif x == 0:
-                    self.grid[x, y].environment = self._generate_random_environment_one_parent(x, y-1)
+                    self.grid[x, y].set_environment(self._generate_random_environment_one_parent(x, y-1))
                 elif y == 0:
-                    self.grid[x, y].environment = self._generate_random_environment_one_parent(x-1, y)
+                    self.grid[x, y].set_environment(self._generate_random_environment_one_parent(x-1, y))
                 elif y == len(self.grid[0]) - 1:
-                    self.grid[x, y].environment = self._generate_random_environment_multi_parents([[x-1, y], [x, y-1], [x-1, y-1]])
+                    self.grid[x, y].set_environment(self._generate_random_environment_multi_parents([[x-1, y], [x, y-1], [x-1, y-1]]))
                 else:
-                    self.grid[x, y].environment = self._generate_random_environment_multi_parents([[x-1, y], [x-1, y-1], [x-1, y+1]])
+                    self.grid[x, y].set_environment(self._generate_random_environment_multi_parents([[x-1, y], [x-1, y-1], [x-1, y+1]]))
 
     def _get_prob(self, x, y):
         return self.probs[self.pg_positions[self.grid[x, y].environment]]["prob"]
@@ -179,11 +180,24 @@ class Space:
     def __init__(
             self,
             card: Card = None,
-            environment: str = None,
-            elevation: int = 0,
-            ramp: bool = False,
+            environment: str = "water"
     ):
         self.card = card
+        self.environment = None
+        self.elevation = None
+        self.ramp = None
+        self.set_environment(environment)
+
+    def set_environment(self, environment):
         self.environment = environment
-        self.elevation = elevation
-        self.ramp = ramp
+        self.elevation = self._generate_elevation()
+        self.ramp = self.set_ramp() if self.environment in NATURAL_RAMP else self.set_ramp(on=False)
+
+    def set_ramp(self, on=True):
+        self.ramp = on
+
+    def _generate_elevation(self):
+        options = ELEVATIONS[self.environment]
+        index = random.randint(0, len(options) - 1)
+        return options[index]
+

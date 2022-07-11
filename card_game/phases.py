@@ -5,7 +5,7 @@ sys.path.append('..')
 import pygame
 
 from classes.presets.colors import Colors
-from classes.tiles import DummyScreen, TileMap, TileSelector, TitleScreen
+from classes.tiles import DummyScreen, MacroScreen, TileMap, TileSelector, TitleScreen
 
 class Phases(enum.Enum):
     BRAWL = "brawl"
@@ -52,12 +52,18 @@ class Macro:
         self.window = window
         self.player = player
 
-        self.dummy = DummyScreen()
+        self.macro = MacroScreen(
+            self.player.board.get_selected_spaces(),
+            self.player.board.selected_spaces,
+            self.player.board.active_spaces,
+            scale=.85
+        )
 
     def draw(self):
         self.canvas.fill((0, 0, 0))
-        self.dummy.draw(self.canvas)
+        self.macro.draw(self.canvas)
         self.window.blit(self.canvas, (0, 0))
+
 
 
 class MainMenu:
